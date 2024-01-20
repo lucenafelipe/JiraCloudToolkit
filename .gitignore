@@ -1,0 +1,19 @@
+# Log files
+*.log
+
+# Python virtual environment directories (if applicable)
+venv/
+ENV/
+
+# node_modules directories (if using any Node.js scripts)
+node_modules/
+
+# Operating system configuration files
+.DS_Store
+Thumbs.db
+
+# Editor/IDE configuration files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
