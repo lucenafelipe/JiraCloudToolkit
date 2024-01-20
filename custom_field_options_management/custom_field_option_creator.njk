@@ -1,42 +1,51 @@
 {# Author: Felipe Lucena
-   Version: 1.0
+   Version: 1.1
    Purpose: Purpose: This JMWE (Nunjucks) script is designed to manage options within a Jira custom field.
    It first checks for the existence of a specific option in a given custom field. If the option does not exist,
    the script then proceeds to add this new option to the field. This automation enhances the dynamic management of custom field options in Jira Cloud environments.
-#}
 
 {# Define the custom field and context IDs #}
 {% set customfield_id = "10066" %}
 {% set context_id = "10170" %}
 
-{# Define the value must be added to the select custom field #}
-{% set value_to_add = "brown" %}
+{# Define the value(s) to add to the select custom field #}
+{% set values_to_add = "Green, Yellow, Red" %}
+
+{# Split the string into an array of individual values #}
+{% set value_array = values_to_add.split(",") %}
 
 {# Construct the URL to fetch existing options in the custom field #}
-{% set custom_field_options_url = "/rest/api/3/field/customfield_" + customfield_id + "/context/" + context_id + "/option"  %}
+{% set custom_field_options_url = "/rest/api/3/field/customfield_" + customfield_id + "/context/" + context_id + "/option" %}
 
 {# Fetch existing options #}
 {% set existingOptions = custom_field_options_url | callJira("GET") %}
 {% set maxResults = existingOptions.maxResults %}
 {% set total_results = existingOptions.total %}
 
-{# Initialize variables #}
-{% set optionExists = false %}
+{# Initialize the totalPages variable #}
 {% set totalPages = ((total_results / maxResults) | round(0, 'ceil')) %}
 
-{# Iterate through each page of results to check if the option exists #}
-{% for page in range(0, totalPages) %}
-    {% set optionsResponse = (custom_field_options_url + "?startAt=" + (page * maxResults)) | callJira("GET") %}
-    {% for option in optionsResponse.values %}
-        {# Check if the option already exists #}
-        {% if option.value == value_to_add %}
-            {% set optionExists = true %}
-        {% endif %}
+{# Iterate over each value in value_array #}
+{% for value_to_add in value_array %}
+    {# Initialize the optionExists variable for each value #}
+    {% set optionExists = false %}
+
+    {# Iterate through each page of results to check if the current option exists #}
+    {% for page in range(0, totalPages) %}
+        {% set optionsResponse = (custom_field_options_url + "?startAt=" + (page * maxResults)) | callJira("GET") %}
+        {% for option in optionsResponse.values %}
+            {# Check if the current option already exists #}
+            {% if option.value == value_to_add %}
+                {% set optionExists = true %}
+            {% endif %}
+        {% endfor %}
     {% endfor %}
+
+    {# Add the new option if it does not exist #}
+    {% if optionExists == false %}
+        {% set _dummy = custom_field_options_url | callJira(verb="POST", body={"options": [{"value": value_to_add}]}) %}
+    {% endif %}
 {% endfor %}
 
-{# Add the new option if it does not exist #}
-{% if optionExists == false %}
-    {{ custom_field_options_url | callJira(verb="POST", body={"options": [{"value": value_to_add}]}) | dump }}
-    A new option was created.
-{% endif %}
+{# Print field options #}
+{{values_to_add}}
