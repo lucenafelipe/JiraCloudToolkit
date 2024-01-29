@@ -7,7 +7,7 @@ Among notable projects, I have worked with renowned clients such as Riachuelo, B
 
 Beyond my practical experience, I am an Atlassian Creator, part of an exclusive program by Atlassian that brings together key content creators on their solutions. My passion for technology, productivity, and entrepreneurship also translates into contributing to the Jira community, where I share knowledge through Moxie's Blog and YouTube channel, as well as producing training to develop new Jira Administrators.
 
-Connect with me on [LinkedIn](https://www.linkedin.com/in/feliperlucena/) and follow my articles on [Medium](https://medium.com/@feliperlucena) and my [YouTube channel](https://bit.ly/canal-jira).
+Connect with me on [LinkedIn](https://www.linkedin.com/in/feliperlucena/) and follow my articles on [Medium](https://medium.com/@feliperlucena) and my [YouTube channel](https://bit.ly/canal-de-jira).
 
 ## JiraCloudToolkit
 Welcome to JiraCloudToolkit, a repository dedicated to sharing practical scripts and solutions for Jira Cloud. Here, you'll find a collection of scripts that I have created and used across various projects, each aimed at solving specific challenges and enhancing the functionality of Jira Cloud.
@@ -29,7 +29,7 @@ This repository is open source and available under the [MIT License](https://git
 
 ## Stay Connected
 - **Blog:** Follow my experiences and insights on the [Moxie blog](https://blog.moxie.com.br/).
-- **YouTube:** Watch tutorials and discussions about Jira and related technologies on my [channel](https://bit.ly/canal-jira).
+- **YouTube:** Watch tutorials and discussions about Jira and related technologies on my [channel](https://bit.ly/canal-de-jira).
 
 ### Acknowledgments
 Special thanks to the Atlassian Community and all the clients I have worked with. Your challenges and feedback have been fundamental in creating these solutions.
