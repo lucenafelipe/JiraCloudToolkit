@@ -42,10 +42,12 @@ This script is designed to assist in the migration and updating of data from Sma
    git clone https://github.com/yourusername/JiraCloudToolKit.git
    cd JiraCloudToolKit
 
-2. Install the required dependencies: `pip install pandas`
-3. Place your Smartsheet, Sharepoint, and Jira export files in the appropriate directory.
-4. Update the file paths in `generate_update_payload.py` to point to your data files.
-5. Run the script: `python jira_data_updates/generate_update_payload.py`
+2. Install the required dependencies: ```sh
+pip install pandas
+
+4. Place your Smartsheet, Sharepoint, and Jira export files in the appropriate directory.
+5. Update the file paths in `generate_update_payload.py` to point to your data files.
+6. Run the script: `python jira_data_updates/generate_update_payload.py`
 
 ## Contributing
 Feel free to fork this repository and submit pull requests. For major changes, please open an issue first to discuss what you would like to change.
