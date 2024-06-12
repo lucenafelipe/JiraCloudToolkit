@@ -41,3 +41,6 @@ This script is designed to assist in the migration and updating of data from Sma
    ```sh
    git clone https://github.com/yourusername/JiraCloudToolKit.git
    cd JiraCloudToolKit
+
+2. Install the required dependencies: `pip install pandas`
+3. 
