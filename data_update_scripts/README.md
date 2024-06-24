@@ -1,3 +1,4 @@
+
 # JiraCloudToolKit
 
 ## Overview
@@ -15,18 +16,24 @@ This repository contains tools and scripts to facilitate data integration and up
 This script is designed to assist in the migration and updating of data from Smartsheet to Jira Cloud. It performs the following tasks:
 
 1. **Identifies Unique Columns**:
-   - Compares the columns in the Smartsheet and Sharepoint files to identify columns that are unique to the Smartsheet.
+   - Compares the columns in the Smartsheet and Sharepoint files to identify columns that are unique to Smartsheet.
 
-2. **Adds Issue Key**:
-   - Adds the "Issue Key" from the Jira Cloud export to the Smartsheet data, facilitating the correspondence between the tickets in Smartsheet and Jira Cloud.
+2. **Merges Data**:
+   - Merges the Smartsheet data with the Jira export data, adding the "Issue Key" to the Smartsheet dataset, facilitating the correspondence between tickets in Smartsheet and Jira Cloud.
 
-3. **Generates Update Payloads**:
+3. **Reorganizes and Cleans Data**:
+   - Removes the duplicate "Unique Key" column from the merged dataset.
+   - Reorders columns to ensure "Issue Key" is in the first position.
+   - Removes records where "Issue Key" is null.
+
+4. **Generates Output Files**:
    - Creates two versions of the output file:
-     - A comprehensive file containing all the data from Smartsheet, including the "Issue Key".
-     - A simplified file containing only the foreign key, the "Issue Key", and the unique columns from Smartsheet.
+     - A full version containing all the data from Smartsheet, including the "Issue Key".
+     - A simplified version containing only the "Issue Key", the foreign key from Smartsheet, and the unique columns from Smartsheet.
 
-4. **Logs Unmatched Records**:
-   - Identifies and logs records in the Smartsheet that do not have a corresponding issue in Jira Cloud.
+5. **Logs Unmatched Records**:
+   - Identifies and logs records in Smartsheet that do not have a corresponding issue in Jira Cloud.
+   - Saves these unmatched records in a separate Excel file and adds a note in the text log file.
 
 ## Usage
 
@@ -38,17 +45,27 @@ This script is designed to assist in the migration and updating of data from Sma
 ### Steps
 
 1. Clone the repository:
-   ```sh
+   \`\`\`sh
    git clone https://github.com/yourusername/JiraCloudToolKit.git
    cd JiraCloudToolKit
+   \`\`\`
 
-2. Install the required dependencies: `pip install pandas`
+2. Install the required dependencies:
+   \`\`\`sh
+   pip install pandas
+   \`\`\`
+
 3. Place your Smartsheet, Sharepoint, and Jira export files in the appropriate directory.
 4. Update the file paths in `generate_update_payload.py` to point to your data files.
-5. Run the script: `python jira_data_updates/generate_update_payload.py`
+5. Run the script:
+   \`\`\`sh
+   python jira_data_updates/generate_update_payload.py
+   \`\`\`
 
 ## Contributing
+
 Feel free to fork this repository and submit pull requests. For major changes, please open an issue first to discuss what you would like to change.
 
 ## License
+
 This project is licensed under the MIT License.
