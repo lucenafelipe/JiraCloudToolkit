@@ -3,17 +3,17 @@ from datetime import datetime
 import os
 
 # Define the file paths
-smartsheet_file_path = '/Users/felipelucena/Downloads/Up Level Library/uplevel_library_smartsheet.xlsx'
-sharepoint_file_path = '/Users/felipelucena/Downloads/Up Level Library/Uplevel Library_Sharepoint.xlsx'
-jira_export_path = '/Users/felipelucena/Downloads/Up Level Library/2024-06-24-ul-jira-sheet.xlsx'
+smartsheet_file_path = '/Users/felipelucena/Downloads/Reman Report/Reman Report_smartsheet.xlsx'
+sharepoint_file_path = '/Users/felipelucena/Downloads/Reman Report/reman_report_sharepoint.xlsx'
+jira_export_path = '/Users/felipelucena/Downloads/Reman Report/2024-06-24-rr-sheet_jira.xlsx'
 
 # Define the sheet names to be analyzed
-smartsheet_sheet_name = 'uplevel_library'
+smartsheet_sheet_name = 'Reman Report'
 sharepoint_sheet_name = 'Sheet1'
 
 # Define the foreign key names
 smartsheet_key = 'unique_key'
-jira_key = 'Unique Key'
+jira_key = 'Summary'
 
 # Extract the root directory from smartsheet_file_path
 root_directory = os.path.dirname(smartsheet_file_path)
@@ -25,9 +25,13 @@ logs_directory = os.path.join(output_directory, 'logs')
 # Create directories if they do not exist
 os.makedirs(logs_directory, exist_ok=True)
 
-# Load the relevant sheets from the two spreadsheets
+print("Loading data from Smartsheet...")
 smartsheet_data = pd.read_excel(smartsheet_file_path, sheet_name=smartsheet_sheet_name)
+print("Smartsheet data loaded.")
+
+print("Loading data from Sharepoint...")
 sharepoint_data = pd.read_excel(sharepoint_file_path, sheet_name=sharepoint_sheet_name)
+print("Sharepoint data loaded.")
 
 # Get the columns from each spreadsheet
 columns_1 = set(smartsheet_data.columns)
@@ -38,26 +42,36 @@ unique_to_file_1 = columns_1 - columns_2
 
 # Create DataFrame for the unique columns
 unique_to_file_1_df = pd.DataFrame(list(unique_to_file_1), columns=['Unique to File 1'])
+print("Unique columns in Smartsheet identified.")
 
-# Display the unique columns
-print("\nUnique columns in file 1:")
-print(unique_to_file_1_df)
-
-# Load the data from the default sheet of the Jira export file
+print("Loading data from Jira export...")
 jira_data = pd.read_excel(jira_export_path)
+print("Jira data loaded.")
 
-# Merge the data based on the foreign key
-merged_data = pd.merge(smartsheet_data, jira_data[['Issue key', jira_key]], left_on=smartsheet_key, right_on=jira_key, how='left')
+print("Verifying the presence of the jira_key column in Jira data...")
+if jira_key not in jira_data.columns:
+    raise KeyError(f"Column '{jira_key}' not found in the Jira export file.")
+
+print(f"Renaming column '{jira_key}' to 'JIRA Summary'...")
+jira_data.rename(columns={jira_key: 'JIRA Summary'}, inplace=True)
+print("Column renamed.")
+
+print("Merging Smartsheet data with Jira data...")
+try:
+    merged_data = pd.merge(smartsheet_data, jira_data[['Issue key', 'JIRA Summary']], left_on=smartsheet_key, right_on='JIRA Summary', how='left')
+    print("Data merged successfully.")
+except KeyError as e:
+    print(f"Error during merge: {e}")
+    raise
 
 # Rename the 'Issue key' column to 'Issue Key' in the resulting DataFrame
 merged_data.rename(columns={'Issue key': 'Issue Key'}, inplace=True)
+print("Column 'Issue key' renamed to 'Issue Key'.")
 
-# Remove the 'Unique Key' column from the merged data
-merged_data.drop(columns=[jira_key], inplace=True)
-
-# Reorder columns to place 'Issue Key' first
-cols = ['Issue Key'] + [col for col in merged_data.columns if col != 'Issue Key']
+# Reorder columns to place 'Issue Key' and 'JIRA Summary' first
+cols = ['Issue Key', 'JIRA Summary'] + [col for col in merged_data.columns if col not in ['Issue Key', 'JIRA Summary']]
 merged_data = merged_data[cols]
+print("Columns reordered.")
 
 # Identify records without a match and save to a log file
 unmatched_records = merged_data[merged_data['Issue Key'].isnull()][smartsheet_key].tolist()
@@ -79,11 +93,10 @@ if unmatched_records:
             log_file.write(f"{record}\n")
         log_file.write(f"\nDetails saved to {unmatched_excel_path}")
 
-    # Print the number of unmatched records and the log file path
-    print(f"No match found for {unmatched_count} records. Details saved to {log_file_path}")
 
 # Remove rows where 'Issue Key' is null
 merged_data = merged_data[merged_data['Issue Key'].notnull()]
+print("Rows with null 'Issue Key' removed.")
 
 # Create the name for the new file with datetime
 output_file_name = f"{smartsheet_sheet_name}_full_version_{datetime.now().strftime('%Y-%m-%d %H%M')}.xlsx"
@@ -92,10 +105,8 @@ output_file_path = os.path.join(output_directory, output_file_name)
 # Save the resulting DataFrame to a new Excel file
 merged_data.to_excel(output_file_path, index=False)
 
-print(f"File saved as {output_file_path}")
-
 # Generate the simplified file with the specified columns
-simplified_columns = ['Issue Key', smartsheet_key] + list(unique_to_file_1)
+simplified_columns = ['Issue Key', 'JIRA Summary', smartsheet_key] + list(unique_to_file_1)
 simplified_data = merged_data[simplified_columns]
 
 # Create the name for the simplified file with datetime
@@ -105,4 +116,10 @@ simplified_file_path = os.path.join(output_directory, simplified_file_name)
 # Save the simplified DataFrame to a new Excel file
 simplified_data.to_excel(simplified_file_path, index=False)
 
+# Print the unique columns in file 1 and details about unmatched records
+print(f"\nUnique columns in {smartsheet_sheet_name} Smartsheet:\n{unique_to_file_1_df}")
+if unmatched_records:
+    print(f"No match found for {unmatched_count} records. Details saved to {log_file_path}")
+
+print(f"Full version file saved as {output_file_path}")
 print(f"Simplified file saved as {simplified_file_path}")
