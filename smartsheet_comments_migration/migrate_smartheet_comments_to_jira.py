@@ -5,7 +5,7 @@ import re
 # Define file path variables
 smartsheet_file_path = '/Users/felipelucena/Downloads/NPI Comments Migration/NPI Service Sourcing Tracker_smartsheet.xlsx'
 jira_users_file_path = '/Users/felipelucena/Downloads/NPI Comments Migration/export_users_jira.csv'
-jira_issues_file_path = '/Users/felipelucena/Downloads/NPI Comments Migration/2024-06-27-npi-service-sourcing-tracker_jira_issues.xlsx'
+jira_issues_file_path = '/Users/felipelucena/Downloads/NPI Comments Migration/2024-06-28-npi-service-sourcing-tracker_jira_issues.xlsx'
 
 # Define the name of the Smartsheet tab and foreign keys
 smartsheet_tab_name = 'NPI Service Sourcing Tracker'
@@ -13,7 +13,7 @@ smartsheet_key_column = 'Service PN'
 jira_key_column = 'Service PN'
 
 # Define output paths
-output_dir = '/Users/felipelucena/Downloads/NPI Comments Migration/Output'
+output_dir = '/Users/felipelucena/Downloads/NPI Comments Migration/Output/'
 current_datetime = datetime.now().strftime("%Y-%m-%d %H%M")
 migration_output_file_path = f'{output_dir}/{smartsheet_tab_name}_comments_migration_{current_datetime}.csv'
 log_file_path = f'{output_dir}/log_comments_migration_{current_datetime}.txt'
@@ -27,7 +27,13 @@ npi_service_sourcing_df = smartsheet_df[smartsheet_tab_name]
 comments_df = smartsheet_df['Comments']
 jira_users_df = pd.read_csv(jira_users_file_path)
 jira_issues_df = pd.read_excel(jira_issues_file_path)
-# jira_issues_df = pd.read_excel(jira_issues_file_path, sheet_name='NPI Service Sourcing Tracker')
+
+# Integrity check for Jira issues file
+essential_columns = ['Issue key', 'Summary', jira_key_column]
+if not all(column in jira_issues_df.columns for column in essential_columns):
+    print(f"ERROR: The Jira issues file does not contain the essential columns: Issue key, Summary, {jira_key_column}.")
+    print("Please perform a new data export from Jira including all necessary fields and try again.")
+    exit(1)
 
 # Adjust column names if necessary
 npi_service_sourcing_df.columns = npi_service_sourcing_df.iloc[0]  # Assume the first row contains headers
