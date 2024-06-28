@@ -68,7 +68,7 @@ When importing the comments into Jira Cloud through the "External System Import"
 MM/DD/YY hh:mm a
 ```
 
-![Jira Date Format](https://github.com/SEU_USUARIO/SEU_REPOSITORIO/blob/main/images/sua_imagem.png)
+![Jira Date Format](https://github.com/lucenafelipe/JiraCloudToolkit/blob/main/smartsheet_comments_migration/images/jira_date_format.png)
 
 ## Output
 
