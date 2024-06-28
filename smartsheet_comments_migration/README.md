@@ -60,6 +60,16 @@ The script performs the following steps:
 3. **Generate Output:**
     - Creates a CSV file containing the migrated comments in a format suitable for Jira import.
 
+## IMPORTANT NOTE
+
+When importing the comments into Jira Cloud through the "External System Import" option, **make sure to use the date format:**
+
+```
+MM/DD/YY hh:mm a
+```
+
+![Jira Date Format](https://github.com/SEU_USUARIO/SEU_REPOSITORIO/blob/main/images/sua_imagem.png)
+
 ## Output
 
 The output of the script includes:
